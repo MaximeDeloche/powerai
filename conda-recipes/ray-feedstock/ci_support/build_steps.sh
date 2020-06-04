@@ -14,18 +14,20 @@
 
 #!/usr/bin/env bash
 
+export CONFIG=linux_ppc64le_python3.7
+
 set -xeuo pipefail
 export PYTHONUNBUFFERED=1
-export FEEDSTOCK_ROOT=/home/conda/feedstock_root
-export RECIPE_ROOT=/home/conda/recipe_root
-export CI_SUPPORT=/home/conda/feedstock_root/.ci_support
+export FEEDSTOCK_ROOT=/home/pwrai/documents/ray/powerai/conda-recipes/ray-feedstock
+export RECIPE_ROOT=/home/pwrai/documents/ray/powerai/conda-recipes/ray-feedstock/recipe
+export CI_SUPPORT=/home/pwrai/documents/ray/powerai/conda-recipes/ray-feedstock/.ci_support
 export CONFIG_FILE="${CI_SUPPORT}/${CONFIG}.yaml"
 export IBM_POWERAI_LICENSE_ACCEPT=yes
 
-cat >~/.condarc <<CONDARC
-conda-build:
- root-dir: /home/conda/feedstock_root/build_artifacts
-CONDARC
+# cat >~/.condarc <<CONDARC
+# conda-build:
+#  root-dir: /home/conda/feedstock_root/build_artifacts
+# CONDARC
 
 conda clean --all -f -y
 conda install --yes --quiet conda-forge-ci-setup=2 conda-build -c conda-forge
@@ -39,8 +41,8 @@ make_build_number "${FEEDSTOCK_ROOT}" "${RECIPE_ROOT}" "${CONFIG_FILE}"
 conda build "${RECIPE_ROOT}" -m "${CI_SUPPORT}/${CONFIG}.yaml" \
     --clobber-file "${CI_SUPPORT}/clobber_${CONFIG}.yaml"
 
-if [[ "${UPLOAD_PACKAGES}" != "False" ]]; then
-    upload_package "${FEEDSTOCK_ROOT}" "${RECIPE_ROOT}" "${CONFIG_FILE}"
-fi
+# if [[ "${UPLOAD_PACKAGES}" != "False" ]]; then
+#     upload_package "${FEEDSTOCK_ROOT}" "${RECIPE_ROOT}" "${CONFIG_FILE}"
+# fi
 
-touch "/home/conda/feedstock_root/build_artifacts/conda-forge-build-done-${CONFIG}"
+touch "$FEEDSTOCK_ROOT/build_artifacts/conda-forge-build-done-${CONFIG}"
